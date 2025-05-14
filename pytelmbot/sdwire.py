@@ -20,7 +20,7 @@ class SDWire:
             self.select_ts()
         except Exception as e:
             print(f"Unable to connect to {name}: {e}")
-            self.list_devices()            
+            self.__class__.list_devices()            
 
     def __enter__(self):
         return self
@@ -51,15 +51,6 @@ class SDWire:
                 
         print(f"Drive is: {self.drive}")
         
-    def list_devices(self):
-        devices = ftd2xx.listDevices()
-        if devices is None:
-            print("No devices")
-        else:
-            print("Available devices:")
-            for device in devices:
-                print(f"  {device}")
-                
     
     def get_usb_drives(self):
         drives = [disk.device for disk in psutil.disk_partitions() if 'removable' in disk.opts and disk.fstype]
@@ -73,14 +64,15 @@ class SDWire:
     def write_file(self, file, path=""):
         shutil.copy(file, os.path.join(self.drive, path))
                 
-    def delete_file(self, file):
+    def copy_file(self, file, dst):
         file_path = os.path.join(self.drive, file)
+        dst_path  = os.path.join(self.drive, dst)
         if os.path.exists(file_path):
-            os.remove(file_path)
-            print("File deleted successfully.")
+            shutil.copy(file_path, dst_path)
+            print("File copied successfully.")
         else:
-            print("File not found.")
-
+            print("File not found.")      
+              
     def rename_file(self, file, new_name):
         file_path = os.path.join(self.drive, file)
         new_path  = os.path.join(os.path.dirname(file_path), new_name)
@@ -90,14 +82,21 @@ class SDWire:
         else:
             print("File not found.")
 
-    def copy_file(self, file, dst):
+    def delete_file(self, file):
         file_path = os.path.join(self.drive, file)
-        dst_path  = os.path.join(self.drive, dst)
         if os.path.exists(file_path):
-            shutil.copy(file_path, dst_path)
-            print("File copied successfully.")
+            os.remove(file_path)
+            print("File deleted successfully.")
         else:
-            print("File not found.")        
+            print("File not found.")
+            
+    def get_file(self, file, dst):
+        file_path = os.path.join(self.drive, file)
+        dst_path  = os.path.join(dst, os.path.basename(file))
+        
+        shutil.copy(file_path, dst_path)
+                
+
                 
     def close(self):
         if self.sdw:
@@ -105,7 +104,16 @@ class SDWire:
             self.sdw.close()
             self.sdw = None
             
-
+    @staticmethod
+    def list_devices():
+        devices = ftd2xx.listDevices()
+        if devices is None:
+            print("No devices")
+        else:
+            print("Available devices:")
+            for device in devices:
+                print(f"  {device}")
+                
 if __name__ == 'main':
     sdw = SDWire('sd-wire_11')
     sdw.write_file('./testing/test.txt')
