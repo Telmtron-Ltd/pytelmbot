@@ -112,5 +112,5 @@ class SDWire:
         else:
             print("Available devices:")
             for device in devices:
-                print(f"  {device}")
+                print(f"  {device.decode('utf-8')}")
                 
