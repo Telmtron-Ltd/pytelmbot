@@ -114,10 +114,3 @@ class SDWire:
             for device in devices:
                 print(f"  {device}")
                 
-if __name__ == 'main':
-    sdw = SDWire('sd-wire_11')
-    sdw.write_file('./testing/test.txt')
-    sdw.copy_file('test.txt', 'testes.txt')
-    sdw.rename_file('test.txt', 'balls.txt')
-
-    sdw.close()
