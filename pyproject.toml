@@ -13,7 +13,7 @@ license = { text = "MIT" }
 authors = [
     { name = "Telmtron Ltd.", email = "create@telmtron.tech" }
 ]
-urls = { 
+urls = {
     "Homepage" = "https://github.com/Telmtron-Ltd/pytelmbot"
 }
 classifiers = [
