@@ -156,8 +156,6 @@ class SDWire:
         
         shutil.copy(file_path, dst_path)
                 
-
-                
     def close(self):
         if self.sdw:
             print("Closing SDWire...")
