@@ -12,12 +12,11 @@ class SDWire:
     
     def __init__(self, name=None):
         self.sdw = None
+        self.drive = None
         try:
-            self.sdw = ftd2xx.openEx(name.encode())
-            
+            self.sdw = ftd2xx.openEx(name.encode())            
             self.select_dut()    
-            time.sleep(3)
-            self.select_ts()
+
         except Exception as e:
             print(f"Unable to connect to {name}: {e}")
             self.__class__.list_devices()            
