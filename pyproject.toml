@@ -24,6 +24,10 @@ dependencies = [
     "psutil>=7.0.0"
 ]
 
+[project.optional-dependencies]
+examples = [
+    "wxpython"
+]
 
 [tool.setuptools.packages.find]
 where = ["."]

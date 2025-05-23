@@ -4,6 +4,23 @@ A collection of utilities to use for automated embedded testing
 
 Designed with pyserial in mind, but could be used for others
 
+## Installation
+
+Install the latest version of the package with:
+
+```sh
+pip install pytelmbot
+```
+
+## Examples
+
+Example scripts are available in the source distribution or on GitHub.
+To install the dependencies required to run the examples, use:
+
+```sh
+pip install pytelmbot[examples]
+```
+
 ## SDWire
 
 Support for managing files on a usb-connected SDWire device by [3MDEB](https://shop.3mdeb.com/shop/open-source-hardware/sdwire/)
