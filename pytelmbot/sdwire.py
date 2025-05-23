@@ -4,6 +4,9 @@ import time
 import shutil
 import ftd2xx
 import psutil
+import platform
+import subprocess
+import sys
 
 class SDWire:
     BITMODE_CBUS = 0x20
@@ -33,9 +36,12 @@ class SDWire:
     def __del__(self):
         self.close()
         
-    def select_dut(self):
-        self.sdw.setBitMode(self.MASK_DUT, self.BITMODE_CBUS)
-        self.drive = None
+    def select_dut(self, force=False):
+        removed = force or self.remove_usb_drive()
+        if removed:
+            self.sdw.setBitMode(self.MASK_DUT, self.BITMODE_CBUS)
+            
+        return removed
     
     def select_ts(self):
         known_drives = self.get_usb_drives()
@@ -59,6 +65,61 @@ class SDWire:
                 print(f"{  drive}")
                 
         return drives
+    
+
+    def remove_usb_drive(self):
+        if not self.drive:
+            removed = True
+        else:
+            removed = False
+            system = platform.system()
+
+            try:
+                if system == 'Windows':
+                    command = f"powershell (New-Object -comObject Shell.Application).NameSpace(17).ParseName('{self.drive}').InvokeVerb('Eject')"
+                    result = subprocess.run(command, capture_output=True, shell=True, check=True)
+                    
+                    if result.returncode == 0:
+                        print("Subprocess completed successfully.")
+                    else:
+                        print(f"Subprocess failed with return code {result.returncode}")
+
+
+                elif system == 'Linux':
+                    # Try using udisksctl first
+                    subprocess.run(['udisksctl', 'unmount', '-b', self.drive], check=True)
+                    subprocess.run(['udisksctl', 'power-off', '-b', self.drive], check=True)
+
+                elif system == 'Darwin':  # macOS
+                    subprocess.run(['diskutil', 'unmountDisk', self.drive], check=True)
+
+                else:
+                    print(f"Unsupported OS: {system}")
+                    return False
+
+                timeout = 10
+                while not removed:
+                    if timeout == 0:
+                        break
+                    elif self.drive in self.get_usb_drives():
+                        time.sleep(1)
+                        timeout -= 1
+                    else:
+                        removed = True                        
+                
+                if removed:
+                    print(f"Drive {self.drive} safely removed.")
+                    self.drive = None
+                else:
+                    print(f"Drive {self.drive} not removed. Is it in use?")
+
+            except subprocess.CalledProcessError as e:
+                print(f"Error removing drive: {e}")
+                sys.exit(1)
+            
+        return removed
+            
+
     
     def write_file(self, file, path=""):
         shutil.copy(file, os.path.join(self.drive, path))
