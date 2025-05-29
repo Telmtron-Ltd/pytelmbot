@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pytelmbot"
-version = "0.1.2"
+version = "0.1.3"
 description = "A collection of utilities to use for automated embedded testing"
 readme = "README.md"
 requires-python = ">=3.7"
