@@ -114,20 +114,28 @@ class MyFrame(wx.Frame):
         self.sdwire_controller = SDWireController(self)
         
         panel = wx.Panel(self)
-
+        panel_sizer = wx.BoxSizer(wx.HORIZONTAL)
+        
+        # To add a visible border and label, use wx.StaticBoxSizer.
+        sdwire_box = wx.StaticBox(panel, label="SDWire", style=wx.BORDER_DEFAULT)
+        sdwire_sizer = wx.StaticBoxSizer(sdwire_box, wx.HORIZONTAL)
+        # Now, when adding to title_sizer, use wx.ALL and a border value for spacing inside the box.
         # Create buttons
         test_server_btn = wx.Button(panel, label='Test Server')
         test_server_btn.Bind(wx.EVT_BUTTON, self.sdwire_controller.select_ts)
         
         dut_btn = wx.Button(panel, label='DUT')
-        dut_btn.Bind(wx.EVT_BUTTON, self.sdwire_controller.select_dut)
+        dut_btn.Bind(wx.EVT_BUTTON, self.sdwire_controller.select_dut)    
 
-        # Layout using a box sizer
-        sizer = wx.BoxSizer(wx.HORIZONTAL)
-        sizer.Add(test_server_btn, 0, wx.ALL | wx.CENTER, 10)
-        sizer.Add(dut_btn, 0, wx.ALL | wx.CENTER, 10)
+        sdwire_sizer.Add(test_server_btn, 0, wx.ALL | wx.CENTER, 5)
+        sdwire_sizer.Add(dut_btn, 0, wx.ALL | wx.CENTER, 5)
 
-        panel.SetSizer(sizer)
+        # Add the SDWire sizer to the main panel sizer
+        panel_sizer.Add(sdwire_sizer, 0, wx.ALL | wx.CENTER, 10)
+        panel_sizer.AddStretchSpacer(1)
+        
+        panel.SetSizer(panel_sizer)
+        panel.Layout()
 
         self.Centre()
         self.Show()

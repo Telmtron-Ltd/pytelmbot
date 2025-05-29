@@ -1,0 +1,5 @@
+# Add requirements for pytelmbot, wxpython and pyinstaller
+pytelmbot
+wxPython
+pyinstaller
+
